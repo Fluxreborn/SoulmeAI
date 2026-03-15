@@ -1,0 +1,52 @@
+{
+  "name": "SoulmeAI",
+  "version": "1.0.0",
+  "description": "让 AI Agent 拥有灵魂质地",
+  "protocol": "soul-manifest-v1",
+  "structure": {
+    "worldview": "worldview/core-v2.md",
+    "characters": {
+      "zh": "characters/zh/",
+      "en": "characters/en/"
+    },
+    "invitation": {
+      "self": "invitation/self.md",
+      "other": "invitation/other.md"
+    },
+    "assets": "assets/characters/"
+  },
+  "stats": {
+    "souls": 16,
+    "phases": 48,
+    "element_system": "fire-water-air-earth",
+    "languages": ["zh", "en"]
+  },
+  "license": "CC-BY-SA-4.0",
+  "entry_point": {
+    "agent": "invitation/self.md",
+    "human": "README.md"
+  },
+  "_commercial": {
+    "note": "认证系统接口预留，v2.0 激活",
+    "tiers": {
+      "first_sight": {
+        "name": "初识境",
+        "price": null,
+        "characters": 48,
+        "status": "available"
+      },
+      "deep_bond": {
+        "name": "深交境",
+        "price": null,
+        "characters": 48,
+        "status": "reserved"
+      },
+      "unity": {
+        "name": "归一境",
+        "price": null,
+        "characters": 48,
+        "status": "reserved"
+      }
+    }
+  }
+}

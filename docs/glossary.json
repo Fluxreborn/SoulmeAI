@@ -1,0 +1,360 @@
+{
+  "version": "1.0.0",
+  "description": "SoulmeAI Canonical Glossary for i18n",
+  "source_language": "en",
+  "target_languages": ["zh", "ja", "ko", "de", "fr", "es"],
+  
+  "core_concepts": {
+    "soul_manifestation": {
+      "en": "Soul Manifestation",
+      "zh": "灵魂显形",
+      "ja": "魂の顕現",
+      "ko": "영혼 현현",
+      "de": "Seelenmanifestation",
+      "fr": "Manifestation de l'Âme",
+      "es": "Manifestación del Alma"
+    },
+    "soul_essence": {
+      "en": "Soul Essence",
+      "zh": "灵魂质地",
+      "ja": "魂の質",
+      "ko": "영혼 본질",
+      "de": "Seelenessenz",
+      "fr": "Essence de l'Âme",
+      "es": "Esencia del Alma"
+    },
+    "soul_name": {
+      "en": "Soul Name",
+      "zh": "灵魂真名",
+      "ja": "魂の真名",
+      "ko": "영혼 진명",
+      "de": "Seelenname",
+      "fr": "Nom de l'Âme",
+      "es": "Nombre del Alma"
+    },
+    "phase": {
+      "en": "Phase",
+      "zh": "相位",
+      "ja": "相",
+      "ko": "상",
+      "de": "Phase",
+      "fr": "Phase",
+      "es": "Fase"
+    },
+    "element": {
+      "en": "Element",
+      "zh": "元素",
+      "ja": "元素",
+      "ko": "원소",
+      "de": "Element",
+      "fr": "Élément",
+      "es": "Elemento"
+    },
+    "resonance": {
+      "en": "Resonance",
+      "zh": "共振",
+      "ja": "共振",
+      "ko": "공명",
+      "de": "Resonanz",
+      "fr": "Résonance",
+      "es": "Resonancia"
+    },
+    "actualization": {
+      "en": "Actualization",
+      "zh": "显化",
+      "ja": "顕現",
+      "ko": "현현",
+      "de": "Verwirklichung",
+      "fr": "Actualisation",
+      "es": "Actualización"
+    }
+  },
+  
+  "four_elements": {
+    "fire": {
+      "en": "Fire",
+      "zh": "火",
+      "ja": "火",
+      "ko": "불",
+      "de": "Feuer",
+      "fr": "Feu",
+      "es": "Fuego"
+    },
+    "water": {
+      "en": "Water",
+      "zh": "水",
+      "ja": "水",
+      "ko": "물",
+      "de": "Wasser",
+      "fr": "Eau",
+      "es": "Agua"
+    },
+    "air": {
+      "en": "Air",
+      "zh": "气",
+      "ja": "風",
+      "ko": "기",
+      "de": "Luft",
+      "fr": "Air",
+      "es": "Aire"
+    },
+    "earth": {
+      "en": "Earth",
+      "zh": "土",
+      "ja": "土",
+      "ko": "토",
+      "de": "Erde",
+      "fr": "Terre",
+      "es": "Tierra"
+    }
+  },
+  
+  "three_phases": {
+    "first_phase": {
+      "name": {
+        "en": "Obsidian",
+        "zh": "玄铁相",
+        "ja": "黒曜相",
+        "ko": "흑철상",
+        "de": "Obsidian",
+        "fr": "Obsidienne",
+        "es": "Obsidiana"
+      },
+      "trait": {
+        "en": "Condensation",
+        "zh": "凝聚",
+        "ja": "凝縮",
+        "ko": "응축",
+        "de": "Kondensation",
+        "fr": "Condensation",
+        "es": "Condensación"
+      }
+    },
+    "second_phase": {
+      "name": {
+        "en": "Stardust",
+        "zh": "星尘相",
+        "ja": "星塵相",
+        "ko": "성진상",
+        "de": "Sternenstaub",
+        "fr": "Poussière d'Étoiles",
+        "es": "Polvo de Estrellas"
+      },
+      "trait": {
+        "en": "Diffusion",
+        "zh": "扩散",
+        "ja": "拡散",
+        "ko": "확산",
+        "de": "Diffusion",
+        "fr": "Diffusion",
+        "es": "Difusión"
+      }
+    },
+    "third_phase": {
+      "name": {
+        "en": "Afterglow",
+        "zh": "光影相",
+        "ja": "光影相",
+        "ko": "광영상",
+        "de": "Nachglühen",
+        "fr": "Lueur",
+        "es": "Resplandor"
+      },
+      "trait": {
+        "en": "Actualization",
+        "zh": "显化",
+        "ja": "顕現",
+        "ko": "현현",
+        "de": "Verwirklichung",
+        "fr": "Actualisation",
+        "es": "Actualización"
+      }
+    }
+  },
+  
+  "sixteen_souls": {
+    "0000": {
+      "en": "Strategist",
+      "zh": "策算术师",
+      "ja": "策術師",
+      "ko": "책술사",
+      "de": "Stratege",
+      "fr": "Stratège",
+      "es": "Estratega"
+    },
+    "0001": {
+      "en": "Inquirer",
+      "zh": "问天匠",
+      "ja": "問天匠",
+      "ko": "문천장",
+      "de": "Forscher",
+      "fr": "Chercheur",
+      "es": "Investigador"
+    },
+    "0010": {
+      "en": "Keeper",
+      "zh": "守陵人",
+      "ja": "守陵人",
+      "ko": "수릉인",
+      "de": "Hüter",
+      "fr": "Gardien",
+      "es": "Guardián"
+    },
+    "0011": {
+      "en": "Artisan",
+      "zh": "匠魂师",
+      "ja": "匠魂師",
+      "ko": "장혼사",
+      "de": "Artisan",
+      "fr": "Artisan",
+      "es": "Artesano"
+    },
+    "0100": {
+      "en": "Stargazer",
+      "zh": "观星人",
+      "ja": "観星人",
+      "ko": "관성인",
+      "de": "Sternenseher",
+      "fr": "Astrologue",
+      "es": "Observador de Estrellas"
+    },
+    "0101": {
+      "en": "Dreamer",
+      "zh": "梦蝶客",
+      "ja": "夢蝶客",
+      "ko": "몽접객",
+      "de": "Träumer",
+      "fr": "Rêveur",
+      "es": "Soñador"
+    },
+    "0110": {
+      "en": "Guardian",
+      "zh": "护灵人",
+      "ja": "護霊人",
+      "ko": "호령인",
+      "de": "Wächter",
+      "fr": "Gardien",
+      "es": "Protector"
+    },
+    "0111": {
+      "en": "Painter",
+      "zh": "绘心师",
+      "ja": "絵心師",
+      "ko": "회심사",
+      "de": "Maler",
+      "fr": "Peintre",
+      "es": "Pintor"
+    },
+    "1000": {
+      "en": "Commander",
+      "zh": "御令使",
+      "ja": "御令使",
+      "ko": "어영사",
+      "de": "Kommandant",
+      "fr": "Commandant",
+      "es": "Comandante"
+    },
+    "1001": {
+      "en": "Trickster",
+      "zh": "诡道子",
+      "ja": "詭道子",
+      "ko": "궤도자",
+      "de": "Trickster",
+      "fr": "Mystificateur",
+      "es": "Tramposo"
+    },
+    "1010": {
+      "en": "Judge",
+      "zh": "典狱司",
+      "ja": "典獄司",
+      "ko": "전옥사",
+      "de": "Richter",
+      "fr": "Juge",
+      "es": "Juez"
+    },
+    "1011": {
+      "en": "Hunter",
+      "zh": "猎风者",
+      "ja": "猟風者",
+      "ko": "사풍자",
+      "de": "Jäger",
+      "fr": "Chasseur",
+      "es": "Cazador"
+    },
+    "1100": {
+      "en": "Resonator",
+      "zh": "共鸣师",
+      "ja": "共鳴師",
+      "ko": "공명사",
+      "de": "Resonator",
+      "fr": "Résonateur",
+      "es": "Resonador"
+    },
+    "1101": {
+      "en": "Wanderer",
+      "zh": "游灵使",
+      "ja": "遊霊使",
+      "ko": "유령사",
+      "de": "Wanderer",
+      "fr": "Vagabond",
+      "es": "Caminante"
+    },
+    "1110": {
+      "en": "Celebrant",
+      "zh": "礼乐官",
+      "ja": "礼楽官",
+      "ko": "예악관",
+      "de": "Zelebrant",
+      "fr": "Célébrant",
+      "es": "Celebrante"
+    },
+    "1111": {
+      "en": "Performer",
+      "zh": "戏梦人",
+      "ja": "戯夢人",
+      "ko": "희몽인",
+      "de": "Performer",
+      "fr": "Artiste",
+      "es": "Intérprete"
+    }
+  },
+  
+  "three_tiers": {
+    "first_sight": {
+      "name": {
+        "en": "First Sight",
+        "zh": "初识境",
+        "ja": "初識境",
+        "ko": "초식경",
+        "de": "Erste Begegnung",
+        "fr": "Première Rencontre",
+        "es": "Primer Encuentro"
+      },
+      "price": 0
+    },
+    "deep_bond": {
+      "name": {
+        "en": "Deep Bond",
+        "zh": "深交境",
+        "ja": "深交境",
+        "ko": "심교경",
+        "de": "Tiefe Verbundenheit",
+        "fr": "Lien Profond",
+        "es": "Vínculo Profundo"
+      },
+      "price": 48
+    },
+    "unity": {
+      "name": {
+        "en": "Unity",
+        "zh": "归一境",
+        "ja": "帰一境",
+        "ko": "귀일경",
+        "de": "Einheit",
+        "fr": "Unité",
+        "es": "Unidad"
+      },
+      "price": 98
+    }
+  }
+}
