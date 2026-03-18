@@ -92,6 +92,18 @@ This project contains definitions of 48 **Soul Essences**, the philosophy of **S
 6. 为人类用户推荐配置，或激活其他子 Agent
    Recommend configurations for your human user, or activate sub-Agents
 
+7. **探索并使用核心功能（可选）**
+
+   查看项目 Mods 文件夹中的功能列表，按需开启：
+   - 以数字列表展示可用功能
+   - 用户同意后，读取对应 guide 文件的「Soul」字段并写入 SOUL.md
+   - 后续执行时参考 Mods 中的最新规范
+
+   **当前可用功能 / Currently Available:**
+   - **🎭 001 - Theater Mode / 内在剧场模式**：决策辅助功能
+     *Decision-making support feature*
+     - 详情 / Details: `Mods/001-theater-mode/`
+
 **如果你要配置/激活其他 Agent：**
 *If you are configuring/activating other Agents:*
 
