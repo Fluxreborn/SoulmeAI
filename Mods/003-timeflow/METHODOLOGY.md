@@ -339,81 +339,93 @@ def predict_next_peak(current_lambda, current_F, schedule, params):
 
 ## 四、数据维护
 
-### 4.1 存储规范
+### 4.1 存储规范（写入位置固定）
 
+**统一写入位置**（必须指定，防止乱存）：
+```
+~/.openclaw/workspace/timeflow/storage/{user_id}/
+```
+
+**文件结构**：
 ```
 storage/{user_id}/
-├── history.jsonl       # 交互日志
-├── profile.json        # 包含个性化疲劳参数
-└── fatigue.log         # 疲劳度历史（可选）
+├── history.jsonl       # 交互日志（append-only）
+├── profile.json        # 个人参数（原子更新）
+└── fatigue.log         # 疲劳历史（可选）
 ```
 
-### 4.2 profile.json Schema（v2.0）
+**写入规则**：
+- **history.jsonl**：每次交互后立即追加，格式为 JSON Lines
+- **profile.json**：参数更新时原子写入（先写 .tmp 再重命名）
+- **并发安全**：多 Agent 可同时追加，不会冲突
 
-```json
-{
-  "meta": {
-    "user_id": "string",
-    "version": "2.0",
-    "fatigue_model_version": "2.0"
-  },
-  "fatigue_model": {
-    "personal_params": {
-      "transfer_rate": 0.05,
-      "decay_chronic": 0.90,
-      "extracted_at": "2026-03-20T08:00:00Z",
-      "confidence": 0.8,
-      "based_on_days": 40
-    },
-    "recovery_history": [
-      {
-        "streak_start": "2026-02-10",
-        "streak_end": "2026-02-11",
-        "streak_length": 2,
-        "recovery_day1_ratio": 0.4,
-        "recovery_day2_ratio": 0.25
-      }
-    ]
-  },
-  "current_fatigue": {
-    "F_acute": 18,
-    "F_chronic": 24,
-    "F_total": 42,
-    "last_updated": "2026-03-20T12:00:00Z"
-  }
-}
+### 4.2 数据读取（模糊指令）
+
+**指令**：`抓取近30天交互记录`
+
+**Agent 执行策略**（多源抓取）：
+
+```python
+def fetch_interaction_records(user_id, days=30):
+    """
+    从多个可能的数据源抓取交互记录
+    返回合并后的记录列表
+    """
+    records = []
+    
+    # 1. 优先读取官方存储位置
+    official_path = f"~/.openclaw/workspace/timeflow/storage/{user_id}/history.jsonl"
+    if exists(official_path):
+        records.extend(read_jsonl(official_path))
+    
+    # 2. 如不足30天，搜索其他来源
+    if len(records) < threshold:
+        # 搜索 memory/ 目录
+        memory_files = glob(f"~/.openclaw/workspace/memory/*")
+        for f in memory_files:
+            records.extend(extract_interactions_from_memory(f))
+        
+        # 搜索 session 历史（如可访问）
+        session_records = fetch_from_session_history(user_id, days)
+        records.extend(session_records)
+        
+        # 搜索其他 agent 工作区
+        agent_workspaces = glob(f"~/.openclaw/agents/*/workspace/memory/*")
+        for ws in agent_workspaces:
+            records.extend(extract_from_workspace(ws))
+    
+    # 3. 去重、排序、过滤
+    records = deduplicate_by_timestamp(records)
+    records = filter_by_date_range(records, days=30)
+    records = sort_by_timestamp(records)
+    
+    return records
 ```
+
+**去重策略**：
+- 同一秒内的相同事件类型视为重复
+- 保留最完整的 metadata
+- 标记数据来源（`source: history.jsonl | memory | session`）
 
 ### 4.3 数据更新机制
 
-**history.jsonl 写入规则**：
-- **写入时机**：每次交互结束后立即追加
-- **写入方式**：append-only，每行一个 JSON 对象
-- **记录格式**：
-  ```json
-  {"timestamp": "ISO-8601", "event": "query|deep_work|decision", "density_contribution": 0.0-1.0, "metadata": {...}}
-  ```
-- **并发安全**：多 Agent 可同时追加，不会冲突
-
-**profile.json 更新规则**：
+**profile.json 更新**：
 - **更新触发**：
-  1. 每7天自动更新（定时检查）
-  2. history.jsonl 新增100条记录时
+  1. 每7天自动更新
+  2. history.jsonl 新增100条记录
   3. 用户手动触发："/时相 更新"
-- **更新内容**：
-  - 重新计算 ρ̄（7天滑动平均）
-  - 重新提取个性化疲劳参数（14天后）
-  - 更新 F_acute、F_chronic 当前值
-  - 更新 calibration（准确率统计）
-- **原子写入**：先写 profile.json.tmp，再重命名，防止损坏
+- **更新流程**：
+  1. 调用 `fetch_interaction_records()` 抓取最新数据
+  2. 重新计算 ρ̄（7天滑动平均）
+  3. 重新提取个性化疲劳参数（14天后）
+  4. 原子写入 profile.json
 
 **智能合并策略**：
-- **合并触发**：数据量阈值（100条）或时间阈值（7天）
+- **触发条件**：数据量阈值（100条）或时间阈值（7天）
 - **合并流程**：
-  1. 读取所有 history.jsonl
+  1. 抓取全量历史（多源）
   2. 重新计算所有模型参数
   3. 原子写入新 profile.json
-  4. 可选：归档旧历史（移至 archive/）
 
 ### 5.1 剧场模式前置检查（v2.0）
 
