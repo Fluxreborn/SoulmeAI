@@ -7,6 +7,8 @@
     "fatigue_model_version": "2.0",
     "data_source": "40天历史交互数据",
     "history_file": "history.jsonl",
+    "archive_dir": "archives/",
+    "retention_days": 90,
     "merge_count": 1,
     "merge_policy": {
       "strategy": "smart_lazy",
@@ -57,9 +59,13 @@
   },
   
   "baseline": {
-    "average_density": 1.5,
+    "average_density": 2150,
+    "density_unit": "bytes/hour",
+    "density_source": "7_day_user_data",
+    "data_sufficiency_days": 12,
     "active_hours": [7, 8, 9, 14, 15, 16, 20, 21],
-    "silent_hours": [0, 1, 2, 3, 4, 5, 6, 12, 13]
+    "silent_hours": [0, 1, 2, 3, 4, 5, 6, 12, 13],
+    "total_bytes_30d": 516800
   },
   
   "pattern": {
