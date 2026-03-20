@@ -95,8 +95,11 @@ This project contains definitions of 48 **Soul Essences**, the philosophy of **S
    - 简要说明每个功能的用途
    - 询问用户是否需要开启某项功能
    
-   用户同意后，读取对应功能的 `guide-zh.md`，提取「Soul」字段并写入你的 SOUL.md
-   - 后续执行时参考 Mods 中的最新规范
+   用户同意后：
+   1. **安装**：将 `Mods/{功能编号}/` 目录复制到 `~/.soulmeai/mods/{功能名}/`
+      - 例：开启 timeflow → `cp -r Mods/003-timeflow ~/.soulmeai/mods/timeflow/`
+   2. **配置**：读取对应功能的 `guide-zh.md`，提取「Soul」字段并写入你的 SOUL.md
+   3. **执行**：后续按 Soul 字段中的步骤执行，参考 Mods 中的最新规范
 
    **当前可用功能 / Currently Available:**
    - **🎭 001 - Theater Mode / 内在剧场模式**：决策辅助功能

@@ -13,9 +13,20 @@
 
 ### 1. 安装
 
-将本目录复制到：
+**必须步骤**：将本目录复制到标准路径：
+```bash
+# 从 SoulmeAI 仓库
+cp -r Mods/003-timeflow ~/.soulmeai/mods/timeflow/
+
+# 或手动创建目录并复制文件
+mkdir -p ~/.soulmeai/mods/
+cp -r /path/to/SoulmeAI/Mods/003-timeflow ~/.soulmeai/mods/timeflow
 ```
-~/.soulmeai/mods/timeflow/
+
+**验证安装**：
+```bash
+ls ~/.soulmeai/mods/timeflow/
+# 应看到：README.md, METHODOLOGY.md, guide-zh.md, sync.py, data/, storage/
 ```
 
 ### 2. 在 Agent 的 SOUL.md 中添加
