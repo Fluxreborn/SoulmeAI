@@ -1,9 +1,10 @@
 {
   "meta": {
     "user_id": "user_demo_001",
-    "version": "1.0.0",
+    "version": "2.0",
     "created_at": "2026-03-20T08:00:00+08:00",
     "updated_at": "2026-03-20T08:00:00+08:00",
+    "fatigue_model_version": "2.0",
     "data_source": "40天历史交互数据",
     "history_file": "history.jsonl",
     "merge_count": 1,
@@ -20,12 +21,45 @@
     "records_since_merge": 12
   },
   
+  "fatigue_model": {
+    "personal_params": {
+      "transfer_rate": 0.05,
+      "decay_chronic": 0.90,
+      "extracted_at": "2026-03-20T08:00:00Z",
+      "confidence": 0.8,
+      "based_on_days": 40,
+      "fatigue_type": "resilient"
+    },
+    "recovery_history": [
+      {
+        "streak_start": "2026-02-10",
+        "streak_end": "2026-02-11",
+        "streak_length": 2,
+        "recovery_day1_ratio": 0.4,
+        "recovery_day2_ratio": 0.25
+      }
+    ],
+    "context_decay_rates": {
+      "sleep": 0.30,
+      "morning": 0.50,
+      "workday_working": 0.80,
+      "lunch_break": 0.60,
+      "evening": 0.50,
+      "weekend": 0.40
+    }
+  },
+  
+  "current_fatigue": {
+    "F_acute": 18,
+    "F_chronic": 24,
+    "F_total": 42,
+    "last_updated": "2026-03-20T12:00:00Z"
+  },
+  
   "baseline": {
     "average_density": 1.5,
     "active_hours": [7, 8, 9, 14, 15, 16, 20, 21],
-    "silent_hours": [0, 1, 2, 3, 4, 5, 6, 12, 13],
-    "peak_days": ["周一", "周二", "周三", "周四"],
-    "low_days": ["周五", "周六", "周日"]
+    "silent_hours": [0, 1, 2, 3, 4, 5, 6, 12, 13]
   },
   
   "pattern": {
@@ -39,18 +73,12 @@
     "secondary_peak": "14:00"
   },
   
-  "weekly": {
-    "friday_offset": 20,
-    "weekend_mode": "relaxed",
-    "friday_peak_delay": 20
-  },
-  
-  "thresholds": {
-    "sunny": 15,
-    "cloudy": 8,
-    "overcast": 4,
-    "light_rain": 1,
-    "fog": 0
+  "weather_thresholds": {
+    "sunny": 10,
+    "cloudy": 20,
+    "overcast": 35,
+    "light_rain": 50,
+    "fog": 999
   },
   
   "calibration": {
@@ -58,13 +86,5 @@
     "accurate_predictions": 8,
     "accuracy": 0.8,
     "last_calibrated": "2026-03-20T07:11:00+08:00"
-  },
-  
-  "key_findings": {
-    "morning_peak_trigger": "07:40 ± 30分钟（置信度75%）",
-    "morning_peak_duration": "60-120分钟",
-    "peak_to_valley": "立即衰减",
-    "valley_to_peak": "2-4小时恢复",
-    "full_cycle": "3-5小时（脉冲+恢复）"
   }
 }
