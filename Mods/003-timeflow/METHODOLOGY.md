@@ -1,49 +1,109 @@
 # 时相系统方法论（Shixiang Methodology）
 
-版本：v1.0.0
+版本：v2.0
 最后更新：2026-03-20
 
 ---
 
 ## 一、系统概述
 
-时相（Shixiang）是检测用户认知能量节律的时间天气预报系统。基于信息密度理论，分析用户交互模式，预测最佳工作窗口与决策时机。
+时相（Shixiang）是检测用户认知能量节律的时间天气预报系统。基于**双层疲劳模型**，分析用户交互模式，预测最佳工作窗口与决策时机。
+
+> v2.0 重大更新：从单层 λ 模型升级为双层疲劳模型（急性疲劳 + 慢性疲劳），支持个性化参数提取。
 
 ---
 
 ## 二、核心算法
 
-### 2.1 基础公式
+### 2.1 双层疲劳模型
 
-**信息密度 ρ**
+**核心洞察**：认知疲劳分为两层
+- **急性疲劳（F_acute）**：短期累积，快速恢复
+- **慢性疲劳（F_chronic）**：长期累积，缓慢恢复
+
+**公式定义**：
 ```
-ρ = N_effective / Δt
+F_total(t) = F_acute(t) + F_chronic(t)
 
-N_effective = 单位时间内的有效交互次数（提问、决策、深度回复）
-Δt = 时间窗口（小时）
-```
-
-**时间变换系数 λ**
-```
-λ = ρ / ρ̄
-
-ρ̄ = 用户历史平均信息密度（个人基线）
+F_acute(t) = F_acute(t-1) × decay_acute + λ(t)
+F_chronic(t) = F_chronic(t-1) × decay_chronic + transfer_rate × max(0, F_acute_peak - threshold)
 ```
 
-**业务时间累积 τ**
-```
-τ = Σ(λ_i × Δt_i)
+**参数说明**：
+- `λ(t)` = 时间变换系数 = ρ / ρ̄
+- `decay_acute` = 急性疲劳衰减率（睡眠0.3，工作0.8）
+- `decay_chronic` = 慢性疲劳衰减率（每天0.80-0.95，**个性化参数**）
+- `transfer_rate` = 转慢性率（0.05-0.15，**个性化参数**）
+- `F_acute_peak` = 当日峰值急性疲劳
+
+### 2.2 上下文感知恢复速率
+
+**核心洞察**：相同静默时段，恢复效果因上下文而异
+
+| 时段 | 上下文 | decay_acute | 说明 |
+|:---|:---|:---:|:---|
+| 00-06点 | 睡眠 | 0.30 | 深度恢复 |
+| 06-09点 | 晨间准备 | 0.50 | 中等恢复 |
+| 09-17点(工作日) | 物理工作 | 0.80 | 轻度恢复 |
+| 12-13点 | 午休 | 0.60 | 中等恢复 |
+| 18-23点 | 晚间放松 | 0.50 | 中等恢复 |
+| 周末全天 | 休闲 | 0.40 | 较好恢复 |
+
+### 2.3 个性化参数提取
+
+**提取时机**：
+- 冷启动：使用默认值（transfer_rate=0.10, decay_chronic=0.85）
+- 14天后：首次提取
+- 之后：每7天更新
+
+**提取算法**：
+```python
+def extract_fatigue_params(user_history):
+    """
+    从用户历史数据中提取个性化疲劳参数
+    """
+    # 1. 找出连续高强度时段（>10次/天，连续≥2天）
+    high_streaks = find_consecutive_high_intensity(user_history, threshold=10, min_days=2)
+    
+    if not high_streaks:
+        return default_params  # 无数据使用默认
+    
+    # 2. 分析恢复模式
+    recovery_ratios = []
+    for streak in high_streaks:
+        day1 = user_history[streak.end + 1].intensity  # 第1天恢复
+        day2 = user_history[streak.end + 2].intensity  # 第2天恢复
+        
+        # 恢复比例 = 恢复后强度 / 高强度均值
+        ratio = (day1 + day2) / 2 / streak.avg_intensity
+        recovery_ratios.append(ratio)
+    
+    avg_ratio = mean(recovery_ratios)
+    
+    # 3. 根据恢复速度反推参数
+    if avg_ratio > 0.5:  # 恢复快（如你）
+        return {"transfer_rate": 0.05, "decay_chronic": 0.90}
+    elif avg_ratio > 0.3:
+        return {"transfer_rate": 0.10, "decay_chronic": 0.85}
+    else:  # 恢复慢
+        return {"transfer_rate": 0.15, "decay_chronic": 0.80}
 ```
 
-### 2.2 天气状态判定
+**参数范围**：
+- `transfer_rate`: 0.05（恢复快）~ 0.15（恢复慢）
+- `decay_chronic`: 0.80（恢复慢）~ 0.95（恢复快）
 
-| 状态 | 图标 | λ 值 | 能量水平 | 建议 |
+### 2.4 天气状态判定（v2.0）
+
+**判定依据**：总疲劳度 F_total
+
+| 天气 | 图标 | F_total 范围 | 能量水平 | 建议 |
 |:---|:---:|:---:|:---:|:---|
-| 晴朗 | ☀️ | λ > 10 | 95% | 深度工作、复杂决策 |
-| 多云 | ⛅ | 5 ≤ λ < 10 | 65% | 创意产出、写作 |
-| 阴天 | ☁️ | 2 ≤ λ < 5 | 40% | 事务处理、邮件 |
-| 小雨 | 🌧️ | 1 ≤ λ < 2 | 25% | 轻量任务、准备 |
-| 静雾 | 🌫️ | λ < 1 | 15% | 休息、恢复 |
+| 晴朗 | ☀️ | < 10 | 95% | 深度工作、复杂决策 |
+| 多云 | ⛅ | 10-20 | 65% | 创意产出、写作 |
+| 阴天 | ☁️ | 20-35 | 40% | 事务处理、邮件 |
+| 小雨 | 🌧️ | 35-50 | 25% | 轻量任务、准备 |
+| 静雾 | 🌫️ | > 50 | 15% | 休息、恢复 |
 
 ---
 
@@ -51,62 +111,76 @@ N_effective = 单位时间内的有效交互次数（提问、决策、深度回
 
 ### 3.1 查询当前状态
 
-**触发**：用户问"我现在状态如何"、"时间天气"、"能量水平"
+**触发**：用户问"我现在状态如何"
 
 **步骤**：
-1. 读取 `storage/{user_id}/profile.json`
-2. 若不存在 → 执行 3.3 冷启动
-3. 计算当前时段的 ρ（最近30分钟交互数 × 2）
-4. 计算 λ = ρ / ρ̄
+1. 读取 `profile.json` 获取个性化参数
+2. 计算当前 F_acute（基于最近交互密度）
+3. 计算当前 F_chronic（基于历史累积）
+4. F_total = F_acute + F_chronic
 5. 查表判定天气状态
-6. 结合 pattern.type 给出建议
-7. 记录本次查询到 `history.jsonl`
+6. 返回状态 + 建议 + 恢复时间预测
 
 **输出示例**：
 ```
-🌫️ 静雾（λ=0.67）
-能量水平：25%
-建议：晨间准备阶段，适合轻阅读、咖啡，08:00后进入深度工作窗口
+🌧️ 小雨（F_total=42）
+├─ 急性疲劳：18（当天工作累积）
+├─ 慢性疲劳：24（连续3天高强度累积）
+├─ 预计恢复：16小时后进入阴天状态
+└─ 建议：轻量任务，避免重大决策
 ```
 
 ### 3.2 生成今日预报
 
-**触发**：用户问"今日预报"、"今天时相"、"全天天气"
-
 **步骤**：
-1. 读取 profile.json
-2. 基于 pattern.type（A/B/C型）生成时间线
-3. 应用 weekly 修正（周五+20min等）
-4. 输出全天 8 个时段的天气流
-5. 标注关键节点（脉冲启动、衰减、恢复）
+1. 获取当前 F_total 和个性化参数
+2. 模拟未来24小时的恢复路径：
+   - 夜间睡眠：F_acute × 0.3
+   - 工作时间：根据上下文使用不同 decay
+   - 慢性疲劳：每日 × decay_chronic
+3. 预测各时段天气状态
+4. 标注最佳工作窗口
 
-**输出示例**：
+### 3.3 波峰预测（基于疲劳恢复）
+
+**核心逻辑**：
+```python
+def predict_next_peak(current_F, schedule, params):
+    """
+    基于疲劳恢复预测下一次可启动高峰的时间
+    """
+    F_current = current_F
+    F_threshold = 10  # 晴朗阈值
+    
+    if F_current < F_threshold:
+        return now()  # 现在即可启动
+    
+    hours = 0
+    while F_current >= F_threshold and hours < 72:
+        # 根据schedule确定当前时段的decay
+        if is_sleep_hour(hours):
+            decay = 0.3
+        elif is_working_hour(hours):
+            decay = 0.8
+        else:
+            decay = 0.5
+        
+        # 模拟恢复
+        F_acute_new = F_acute * decay
+        F_chronic_new = F_chronic * params.decay_chronic
+        F_current = F_acute_new + F_chronic_new
+        
+        hours += 1
+    
+    return now() + hours
 ```
-📅 今日预报 | 周五
 
-08:00-09:30 ☀️ 晴朗（λ=12）深度工作
-09:30-11:00 ⛅ 多云（λ=6）创意产出
-11:00-12:30 ☁️ 阴天（λ=3）事务处理
-...
-```
-
-### 3.3 冷启动分析
-
-**触发**：profile.json 不存在
-
-**步骤**：
-1. 读取用户历史交互数据（最近14天）
-2. 计算 ρ̄（平均信息密度）：
-   - 若数据量 ≥ 50 条：ρ̄ = N / (14×24)
-   - 若数据量 < 50 条：ρ̄ = 1.5（基于实证研究：知识工作者每40分钟一次深度有效交互）
-   - 标记 `learning_mode: true`（数据积累中）
-3. 识别 pattern.type：
-   - 6-9点高密度 → 模式A（晨型）
-   - 0-6点高密度 → 模式B（夜型）
-   - 14-18点高密度 → 模式C（下午型）
-4. 计算 peak_time、peak_std、pulse_duration
-5. 生成 profile.json
-6. 返回初始化报告（如处于 learning_mode，提示用户准确率会随使用提升）
+**场景示例**：
+- 连续3天高强度后：F_total ≈ 60
+- 第4天休息：F_acute = 0, F_chronic = 60 × 0.9 = 54（仍>50）→ 静雾
+- 第5天：F_chronic = 54 × 0.9 = 48.6 → 小雨
+- 第6天：F_chronic = 48.6 × 0.9 = 43.7 → 小雨
+- ...需要约7-10天完全恢复（取决于个性化参数）
 
 ---
 
@@ -116,122 +190,94 @@ N_effective = 单位时间内的有效交互次数（提问、决策、深度回
 
 ```
 storage/{user_id}/
-├── history.jsonl       # 交互日志（append-only）
-└── profile.json        # 用户画像（合并生成）
+├── history.jsonl       # 交互日志
+├── profile.json        # 包含个性化疲劳参数
+└── fatigue.log         # 疲劳度历史（可选）
 ```
 
-### 4.2 日志写入
-
-**时机**：每次查询结束后
-
-**格式**：
-```json
-{
-  "timestamp": "ISO-8601",
-  "query_type": "current|forecast|decision",
-  "density_contribution": 0.0-1.0,
-  "weather_after": "晴朗|多云|阴天|小雨|静雾"
-}
-```
-
-**写入方式**：append-only，每行一个JSON
-
-### 4.3 智能合并
-
-**触发条件**（满足任一）：
-1. 新记录数 ≥ 100
-2. 距离上次合并 ≥ 7天
-3. 新记录数 ≥ 500（强制）
-
-**合并步骤**：
-1. 读取所有 history.jsonl
-2. 重新计算 ρ̄
-3. 重新识别 pattern.type
-4. 更新 calibration（准确率统计）
-5. 原子写入 profile.json.tmp → 重命名为 profile.json
-
----
-
-## 五、集成场景
-
-### 5.1 剧场模式前置检查
-
-**触发**：用户表达纠结/两难
-
-**步骤**：
-1. 查询当前时相状态
-2. 若 λ < 2（小雨/静雾）：
-   - 建议"当前能量较低，建议先休息，明日再决策"
-3. 若 λ ≥ 5（晴朗/多云）：
-   - 正常启动剧场对抗模式
-4. 若 2 ≤ λ < 5（阴天）：
-   - 提示"能量中等，若决策可在30分钟内完成则继续，否则建议延后"
-
-### 5.2 任务推荐
-
-**触发**：用户问"我现在适合做什么"
-
-**步骤**：
-1. 查询当前天气状态
-2. 根据天气匹配任务类型：
-   - 晴朗：深度工作、复杂决策、架构设计
-   - 多云：创意产出、写作、代码实现
-   - 阴天：事务处理、邮件、会议
-   - 小雨：规划、整理、轻阅读
-   - 静雾：休息、恢复、不安排任务
-
----
-
-## 六、Schema 规范
-
-### 6.1 profile.json 结构
+### 4.2 profile.json Schema（v2.0）
 
 ```json
 {
   "meta": {
     "user_id": "string",
-    "version": "1.0.0",
-    "created_at": "ISO-8601",
-    "updated_at": "ISO-8601",
-    "merge_policy": {
-      "max_interval_days": 7,
-      "preferred_records": 100
-    }
+    "version": "2.0",
+    "fatigue_model_version": "2.0"
   },
-  "baseline": {
-    "average_density": 1.5
+  "fatigue_model": {
+    "personal_params": {
+      "transfer_rate": 0.05,
+      "decay_chronic": 0.90,
+      "extracted_at": "2026-03-20T08:00:00Z",
+      "confidence": 0.8,
+      "based_on_days": 40
+    },
+    "recovery_history": [
+      {
+        "streak_start": "2026-02-10",
+        "streak_end": "2026-02-11",
+        "streak_length": 2,
+        "recovery_day1_ratio": 0.4,
+        "recovery_day2_ratio": 0.25
+      }
+    ]
   },
-  "pattern": {
-    "type": "A|B|C",
-    "confidence": 0.0-1.0,
-    "peak_time": "HH:MM",
-    "peak_std": 30
-  },
-  "thresholds": {
-    "sunny": 10,
-    "cloudy": 5,
-    "overcast": 2,
-    "light_rain": 1,
-    "fog": 0
-  },
-  "calibration": {
-    "accuracy": 0.8
+  "current_fatigue": {
+    "F_acute": 18,
+    "F_chronic": 24,
+    "F_total": 42,
+    "last_updated": "2026-03-20T12:00:00Z"
   }
 }
 ```
 
 ---
 
-## 七、验证清单
+## 五、集成场景
 
-安装后执行以下检查：
+### 5.1 剧场模式前置检查（v2.0）
 
-- [ ] storage/{user_id}/ 目录可创建
-- [ ] profile.json 符合 Schema v1.0.0
-- [ ] history.jsonl 可追加写入
-- [ ] 计算 λ = 2.0 时返回"阴天"
-- [ ] 合并后 profile.json 正确更新
+```python
+if F_total > 50:  # 静雾
+    advice = "当前深度疲劳，建议休息1-3天后再决策"
+elif F_total > 35:  # 小雨
+    advice = "疲劳累积中，简单决策可继续，复杂决策建议延后"
+elif F_total > 20:  # 阴天
+    advice = "轻度疲劳，30分钟内可完成决策"
+else:  # 多云/晴朗
+    start_theater_mode()
+```
+
+### 5.2 模式漂移检测
+
+**检测条件**：
+- 连续5天 F_total > 35（小雨+状态）
+- 夜间活动频率 > 20%
+
+**触发**：重新提取个性化参数，可能模式切换
 
 ---
 
-*文档状态：已确认 v1.0.0*
+## 六、验证与校准
+
+### 6.1 准确率验证
+
+**方法**：
+1. 预测次日天气
+2. 记录实际天气（用户反馈）
+3. 统计准确率
+
+**目标**：
+- v2.0 目标准确率：> 85%（v1.0 为 80%）
+- 连续高强度后恢复预测：> 70%
+
+### 6.2 参数校准
+
+**校准触发**：
+- 准确率 < 80%
+- 用户连续3次反馈"不准确"
+- 数据量新增50条
+
+---
+
+*文档版本：v2.0 | 双层疲劳模型 | 个性化参数提取*
