@@ -343,7 +343,7 @@ def predict_next_peak(current_lambda, current_F, schedule, params):
 
 **统一写入位置**（必须指定，防止乱存）：
 ```
-~/.openclaw/workspace/timeflow/storage/{user_id}/
+~/Projects/soulmeai/Mods/003-timeflow/storage/{user_id}/
 ```
 
 **文件结构**：
@@ -373,14 +373,14 @@ def fetch_interaction_records(user_id, days=30):
     """
     records = []
     
-    # 1. 优先读取官方存储位置
-    official_path = f"~/.openclaw/workspace/timeflow/storage/{user_id}/history.jsonl"
+    # 1. 优先读取官方存储位置（SoulmeAI 项目目录）
+    official_path = f"~/Projects/soulmeai/Mods/003-timeflow/storage/{user_id}/history.jsonl"
     if exists(official_path):
         records.extend(read_jsonl(official_path))
     
     # 2. 如不足30天，搜索其他来源
     if len(records) < threshold:
-        # 搜索 memory/ 目录
+        # 搜索 OpenClaw memory/ 目录
         memory_files = glob(f"~/.openclaw/workspace/memory/*")
         for f in memory_files:
             records.extend(extract_interactions_from_memory(f))
