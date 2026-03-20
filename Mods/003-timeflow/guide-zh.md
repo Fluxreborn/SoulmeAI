@@ -37,11 +37,12 @@
 **Agent 执行**：
 1. **抓取数据**：`抓取近30天用户交互记录`
    - 搜索范围：
-     - `~/Projects/soulmeai/Mods/003-timeflow/storage/{user_id}/history.jsonl`（官方存储）
+     - `{SoulmeAI}/Mods/003-timeflow/storage/{user_id}/history.jsonl`（官方存储）
      - `~/.openclaw/workspace/memory/` 目录
      - Session 历史记录
      - 其他 Agent 工作区
    - 合并、去重、排序
+   - *注：SoulmeAI 安装路径可能为 `~/.openclaw/workspace/projects/soulmeai/` 或自定义路径*
 2. **生成画像**：基于抓取的数据分析用户模式
 3. **返回模式类型**：晨型/夜型/下午型 + 置信度
 
