@@ -88,17 +88,24 @@ This project contains definitions of 48 **Soul Essences**, the philosophy of **S
 6. 为人类用户推荐配置，或激活其他子 Agent
    Recommend configurations for your human user, or activate sub-Agents
 
-7. **探索并使用核心功能（可选）**
+7. **列出并介绍可用功能（必须执行）**
 
-   查看项目 Mods 文件夹中的功能列表，按需开启：
-   - 以数字列表展示可用功能
-   - 用户同意后，读取对应 guide 文件的「Soul」字段并写入 SOUL.md
+   读取 `Mods/README.md`，获取完整功能列表，向用户展示：
+   - 用数字列表展示所有可用功能
+   - 简要说明每个功能的用途
+   - 询问用户是否需要开启某项功能
+   
+   用户同意后，读取对应功能的 `guide-zh.md`，提取「Soul」字段并写入你的 SOUL.md
    - 后续执行时参考 Mods 中的最新规范
 
    **当前可用功能 / Currently Available:**
    - **🎭 001 - Theater Mode / 内在剧场模式**：决策辅助功能
      *Decision-making support feature*
      - 详情 / Details: `Mods/001-theater-mode/`
+   
+   - **⏳ 003 - Timeflow / 时相**：时间天气预报，决策时机建议
+     *Time weather forecast, decision timing advice*
+     - 详情 / Details: `Mods/003-timeflow/`
 
 **如果你要配置/激活其他 Agent：**
 *If you are configuring/activating other Agents:*
