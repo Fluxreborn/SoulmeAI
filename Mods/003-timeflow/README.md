@@ -104,7 +104,6 @@ Agent：当前☀️ 晴朗（λ=12），适合：架构设计、复杂决策、
 见 `METHODOLOGY.md`：
 - 核心算法公式
 - Schema 规范
-- 集成场景（剧场模式前置检查等）
 
 `data/` - 演示数据（`profile_demo.json`、`history_demo.jsonl`），展示数据结构供参考
 
