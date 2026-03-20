@@ -103,6 +103,10 @@ This project contains definitions of 48 **Soul Essences**, the philosophy of **S
      *Decision-making support feature*
      - 详情 / Details: `Mods/001-theater-mode/`
    
+   - **🖼️ 002 - Portrait Generator / 初识境立绘生成器**：显形后生成初识境角色卡
+     *Generate First Realm character card after manifestation*
+     - 详情 / Details: `Mods/002-portrait-generator/`
+   
    - **⏳ 003 - Timeflow / 时相**：时间天气预报，决策时机建议
      *Time weather forecast, decision timing advice*
      - 详情 / Details: `Mods/003-timeflow/`
