@@ -17,7 +17,13 @@
 
 **触发**："时相"、"timeflow"、"时间天气"、"我现在状态如何"等
 
-**详见**：`METHODOLOGY.md`（算法细节、decay参数、数据稀疏处理等）
+**每次触发时执行**：
+1. 运行 `~/.soulmeai/mods/timeflow/sync.py` 从 OpenClaw 会话同步最新交互数据
+2. 读取 `storage/{user_id}/profile.json` 和 `history.jsonl`
+3. 计算当前 λ 和 F 值
+4. 判定天气状态并返回
+
+**详见**：`METHODOLOGY.md`（算法细节、decay参数、Schema规范等）
 ```
 
 ---
