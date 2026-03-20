@@ -343,23 +343,21 @@ def predict_next_peak(current_lambda, current_F, schedule, params):
 
 **统一写入位置**（必须指定，防止乱存）：
 ```
-{OPENCLAW_ROOT}/workspace/projects/soulmeai/Mods/003-timeflow/storage/{user_id}/
-```
-
-或根据实际安装位置：
-```
-{SoulmeAI_install_path}/Mods/003-timeflow/storage/{user_id}/
+~/.soulmeai/mods/timeflow/storage/{user_id}/
 ```
 
 **文件结构**：
 ```
-storage/{user_id}/
+~/.soulmeai/mods/timeflow/storage/{user_id}/
 ├── history.jsonl       # 交互日志（append-only）
 ├── profile.json        # 个人参数（原子更新）
 └── fatigue.log         # 疲劳历史（可选）
 ```
 
-**注意**：开发环境（如 macOS 本地开发）可能使用 `~/Projects/soulmeai/`，但用户标准安装环境通常在 OpenClaw 目录结构下。
+**说明**：
+- 按 SoulmeAI 安装协议，`Mods/003-timeflow/` 会被复制到 `~/.soulmeai/mods/timeflow/`
+- 所有交互数据统一写入上述位置
+- 多 Agent 可共享此存储，避免数据孤岛
 
 **写入规则**：
 - **history.jsonl**：每次交互后立即追加，格式为 JSON Lines
@@ -373,31 +371,21 @@ storage/{user_id}/
 **Agent 执行策略**（多源抓取）：
 
 ```python
-def fetch_interaction_records(user_id, days=30, storage_base=None):
+def fetch_interaction_records(user_id, days=30):
     """
     从多个可能的数据源抓取交互记录
     返回合并后的记录列表
-    
-    Args:
-        storage_base: SoulmeAI 存储根目录，如未提供则自动检测
     """
     records = []
     
-    # 自动检测或获取存储基础路径
-    if storage_base is None:
-        # 标准 OpenClaw 架构
-        storage_base = detect_soulmeai_storage_path()
-        # 尝试：~/.openclaw/workspace/projects/soulmeai/
-        # 或：{安装目录}/
-    
-    # 1. 优先读取官方存储位置
-    official_path = f"{storage_base}/Mods/003-timeflow/storage/{user_id}/history.jsonl"
+    # 1. 优先读取官方存储位置（SoulmeAI 标准安装路径）
+    official_path = f"~/.soulmeai/mods/timeflow/storage/{user_id}/history.jsonl"
     if exists(official_path):
         records.extend(read_jsonl(official_path))
     
-    # 2. 如不足30天，搜索其他来源
+    # 2. 如不足30天，搜索补充来源
     if len(records) < threshold:
-        # 搜索 OpenClaw workspace memory/ 目录
+        # 搜索 OpenClaw memory/ 目录
         memory_files = glob(f"~/.openclaw/workspace/memory/*")
         for f in memory_files:
             records.extend(extract_interactions_from_memory(f))

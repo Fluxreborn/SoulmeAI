@@ -26,7 +26,7 @@ cp -r /path/to/SoulmeAI/Mods/003-timeflow ~/.soulmeai/mods/timeflow
 **验证安装**：
 ```bash
 ls ~/.soulmeai/mods/timeflow/
-# 应看到：README.md, METHODOLOGY.md, guide-zh.md, sync.py, data/, storage/
+# 应看到：README.md, METHODOLOGY.md, guide-zh.md, data/, storage/
 ```
 
 ### 2. 在 Agent 的 SOUL.md 中添加

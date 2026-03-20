@@ -18,10 +18,11 @@
 **触发**："时相"、"timeflow"、"时间天气"、"我现在状态如何"等
 
 **每次触发时执行**：
-1. 运行 `~/.soulmeai/mods/timeflow/sync.py` 从 OpenClaw 会话同步最新交互数据
-2. 读取 `storage/{user_id}/profile.json` 和 `history.jsonl`
-3. 计算当前 λ 和 F 值
-4. 判定天气状态并返回
+1. **抓取数据**：从多源抓取近30天交互记录
+   - 优先：`~/.soulmeai/mods/timeflow/storage/{user_id}/history.jsonl`
+   - 补充：`~/.openclaw/workspace/memory/`、session历史、其他agent工作区
+2. 计算当前 λ 和 F 值
+3. 判定天气状态并返回
 
 **详见**：`METHODOLOGY.md`（算法细节、decay参数、Schema规范等）
 ```
@@ -37,12 +38,11 @@
 **Agent 执行**：
 1. **抓取数据**：`抓取近30天用户交互记录`
    - 搜索范围：
-     - `{SoulmeAI}/Mods/003-timeflow/storage/{user_id}/history.jsonl`（官方存储）
-     - `~/.openclaw/workspace/memory/` 目录
-     - Session 历史记录
-     - 其他 Agent 工作区
+     - `~/.soulmeai/mods/timeflow/storage/{user_id}/history.jsonl`（官方存储）
+     - `~/.openclaw/workspace/memory/` 目录（补充来源）
+     - Session 历史记录（补充来源）
+     - 其他 Agent 工作区（补充来源）
    - 合并、去重、排序
-   - *注：SoulmeAI 安装路径可能为 `~/.openclaw/workspace/projects/soulmeai/` 或自定义路径*
 2. **生成画像**：基于抓取的数据分析用户模式
 3. **返回模式类型**：晨型/夜型/下午型 + 置信度
 
