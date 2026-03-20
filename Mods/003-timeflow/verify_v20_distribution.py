@@ -82,31 +82,33 @@ results = simulate_fatigue_v20(daily_data, params)
 f_totals = [r["f_total"] for r in results]
 
 print("=" * 70)
-print("v2.0 算法验证结果 - F_total 分布分析")
+print("v2.0 疲劳模型验证 - F_total 分布分析（仅供开发参考）")
 print("=" * 70)
-print("\n每日F_total计算：")
-print(f"{'日期':<10} {'交互':<6} {'λ':<6} {'F_acute':<10} {'F_chronic':<11} {'F_total':<10} {'天气'}")
+print("\n⚠️  注意：此脚本仅验证 F 模型计算，非完整时相系统")
+print("   实际天气由 λ 判定，F 仅用于预测恢复时间\n")
+print("每日F_total计算（F-based 天气仅供验证参考）：")
+print(f"{'日期':<10} {'交互':<6} {'λ':<6} {'F_acute':<10} {'F_chronic':<11} {'F_total':<10} {'F-天气'}")
 print("-" * 75)
 
-weather_counts = {"☀️ 晴朗": 0, "⛅ 多云": 0, "☁️ 阴天": 0, "🌧️ 小雨": 0, "🌫️ 静雾": 0}
+weather_counts = {"☀️F-晴朗": 0, "⛅F-多云": 0, "☁️F-阴天": 0, "🌧️F-小雨": 0, "🌫️F-静雾": 0}
 
 for r in results:
     f = r["f_total"]
     if f < 10:
-        weather = "☀️ 晴朗"
-        weather_counts["☀️ 晴朗"] += 1
+        weather = "☀️F-晴朗"
+        weather_counts["☀️F-晴朗"] += 1
     elif f < 20:
-        weather = "⛅ 多云"
-        weather_counts["⛅ 多云"] += 1
+        weather = "⛅F-多云"
+        weather_counts["⛅F-多云"] += 1
     elif f < 35:
-        weather = "☁️ 阴天"
-        weather_counts["☁️ 阴天"] += 1
+        weather = "☁️F-阴天"
+        weather_counts["☁️F-阴天"] += 1
     elif f < 50:
-        weather = "🌧️ 小雨"
-        weather_counts["🌧️ 小雨"] += 1
+        weather = "🌧️F-小雨"
+        weather_counts["🌧️F-小雨"] += 1
     else:
-        weather = "🌫️ 静雾"
-        weather_counts["🌫️ 静雾"] += 1
+        weather = "🌫️F-静雾"
+        weather_counts["🌫️F-静雾"] += 1
     
     print(f"{r['date']:<10} {r['interactions']:<6} {r['lambda']:<6.2f} {r['f_acute']:<10.2f} {r['f_chronic']:<11.2f} {r['f_total']:<10.2f} {weather}")
 
